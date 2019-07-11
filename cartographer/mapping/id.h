@@ -390,6 +390,11 @@ class MapById {
     return ConstIterator(*this, IdType{trajectory_id, left->first});
   }
 
+//  const std::map<int, MapByIndex>& trajectories()
+//  {
+//    return trajectories_;
+//  }
+
  private:
   struct MapByIndex {
     bool can_append_ = true;
@@ -399,6 +404,7 @@ class MapById {
   static int GetIndex(const NodeId& id) { return id.node_index; }
   static int GetIndex(const SubmapId& id) { return id.submap_index; }
 
+public:
   std::map<int, MapByIndex> trajectories_;
 };
 

@@ -42,7 +42,11 @@ struct TrajectoryNodePose {
 };
 
 struct TrajectoryNode {
+public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   struct Data {
+    public:
+      EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     common::Time time;
 
     // Transform to approximately gravity align the tracking frame as

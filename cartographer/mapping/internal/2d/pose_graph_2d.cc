@@ -749,7 +749,7 @@ std::vector<std::vector<int>> PoseGraph2D::GetConnectedTrajectories() const {
 PoseGraphInterface::SubmapData PoseGraph2D::GetSubmapData(
     const SubmapId& submap_id) const {
   common::MutexLocker locker(&mutex_);
-  return GetSubmapDataUnderLock(submap_id);
+  return  GetSubmapDataUnderLock(submap_id);
 }
 
 MapById<SubmapId, PoseGraphInterface::SubmapData>
