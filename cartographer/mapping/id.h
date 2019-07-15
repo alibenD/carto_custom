@@ -26,7 +26,7 @@
 #include <ostream>
 #include <tuple>
 #include <vector>
-
+#include "cartographer/common/mutex.h"
 #include "cartographer/common/make_unique.h"
 #include "cartographer/common/port.h"
 #include "cartographer/common/time.h"
@@ -267,7 +267,18 @@ class MapById {
     const int index =
         trajectory.data_.empty() ? 0 : trajectory.data_.rbegin()->first + 1;
     trajectory.data_.emplace(index, data);
-    return IdType{trajectory_id, index};
+//      {
+//          cartographer::common::MutexLocker lock(&mutex_);
+//          CHECK_GE(trajectory_id, 0);
+//          auto& trajectory = trajectories_sync[trajectory_id];
+//          CHECK(trajectory.can_append_);
+//          const int index =
+//                  trajectory.data_.empty() ? 0 : trajectory.data_.rbegin()->first + 1;
+//          trajectory.data_.insert(std::make_pair(index, data));
+////          return IdType{trajectory_id, index};
+//      }
+      return IdType{trajectory_id, index};
+
   }
 
   // Returns an iterator to the element at 'id' or the end iterator if it does
@@ -283,6 +294,14 @@ class MapById {
     auto& trajectory = trajectories_[id.trajectory_id];
     trajectory.can_append_ = false;
     CHECK(trajectory.data_.emplace(GetIndex(id), data).second);
+//      {
+//          cartographer::common::MutexLocker lock(&mutex_);
+//          CHECK_GE(id.trajectory_id, 0);
+//          CHECK_GE(GetIndex(id), 0);
+//          auto& trajectory = trajectories_sync[id.trajectory_id];
+//          trajectory.can_append_ = false;
+//          CHECK(trajectory.data_.insert(std::make_pair(GetIndex(id), data)).second);
+//      }
   }
 
   // Removes the data for 'id' which must exist.
@@ -301,6 +320,23 @@ class MapById {
     if (trajectory.data_.empty()) {
       trajectories_.erase(id.trajectory_id);
     }
+//      {
+//          cartographer::common::MutexLocker lock(&mutex_);
+//          auto& trajectory = trajectories_sync.at(id.trajectory_id);
+//          const auto it = trajectory.data_.find(GetIndex(id));
+//          CHECK(it != trajectory.data_.end());
+//          if (std::next(it) == trajectory.data_.end()) {
+//              // We are removing the data with the highest index from this trajectory.
+//              // We assume that we will never append to it anymore. If we did, we would
+//              // have to make sure that gaps in indices are properly chosen to maintain
+//              // correct connectivity.
+//              trajectory.can_append_ = false;
+//          }
+//          trajectory.data_.erase(it);
+//          if (trajectory.data_.empty()) {
+//              trajectories_sync.erase(id.trajectory_id);
+//          }
+//      }
   }
 
   bool Contains(const IdType& id) const {
@@ -390,10 +426,10 @@ class MapById {
     return ConstIterator(*this, IdType{trajectory_id, left->first});
   }
 
-//  const std::map<int, MapByIndex>& trajectories()
-//  {
-//    return trajectories_;
-//  }
+  const std::map<int, MapByIndex> trajectories()
+  {
+    return trajectories_;
+  }
 
  private:
   struct MapByIndex {
@@ -405,8 +441,11 @@ class MapById {
   static int GetIndex(const SubmapId& id) { return id.submap_index; }
 
 public:
+//  cartographer::common::Mutex mutex_;
   std::map<int, MapByIndex> trajectories_;
-};
+//  std::map<int, MapByIndex> trajectories_sync GUARDED_BY(mutex_);
+
+    };
 
 }  // namespace mapping
 }  // namespace cartographer
