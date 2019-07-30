@@ -90,6 +90,9 @@ class MapBuilderInterface {
 
   virtual const std::vector<proto::TrajectoryBuilderOptionsWithSensorIds>&
   GetAllTrajectoryBuilderOptions() const = 0;
+
+  virtual void AddTrajectoryBuilder(const proto::TrajectoryBuilderOptionsWithSensorIds&
+  options_with_sensor_ids_proto) = 0;
 };
 
 }  // namespace mapping

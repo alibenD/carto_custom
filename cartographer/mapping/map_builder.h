@@ -79,6 +79,10 @@ class MapBuilder : public MapBuilderInterface {
     return all_trajectory_builder_options_;
   }
 
+  void AddTrajectoryBuilder(const proto::TrajectoryBuilderOptionsWithSensorIds& options_with_sensor_ids_proto) override {
+      all_trajectory_builder_options_.push_back(options_with_sensor_ids_proto);
+  }
+
  private:
   const proto::MapBuilderOptions options_;
   common::ThreadPool thread_pool_;
