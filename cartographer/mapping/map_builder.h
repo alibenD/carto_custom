@@ -83,6 +83,10 @@ class MapBuilder : public MapBuilderInterface {
       all_trajectory_builder_options_.push_back(options_with_sensor_ids_proto);
   }
 
+  void FreezeTrajectory(int trajectory_id){
+      pose_graph_->FreezeTrajectory(trajectory_id);
+  }
+
  private:
   const proto::MapBuilderOptions options_;
   common::ThreadPool thread_pool_;

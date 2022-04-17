@@ -93,6 +93,8 @@ class MapBuilderInterface {
 
   virtual void AddTrajectoryBuilder(const proto::TrajectoryBuilderOptionsWithSensorIds&
   options_with_sensor_ids_proto) = 0;
+
+  virtual void FreezeTrajectory(int trajectory_id) = 0;
 };
 
 }  // namespace mapping
